@@ -16,8 +16,47 @@ To Create a project on Time series analysis on weather forecasting using ARIMA m
 7. Evaluate model predictions
 ### PROGRAM:
 
+```
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.arima.model import ARIMA
+from sklearn.metrics import mean_squared_error
+
+data = pd.read_csv(r"C:\Users\admin\OneDrive\Desktop\sem 3\time series\AirPassengers.csv")
+
+data.head()
+data['Month'] = pd.to_datetime(data['Month'])
+data.set_index('Month', inplace=True)
+
+def arima_model(data, target_variable, order):
+    train_size = int(len(data) * 0.8)
+    train_data, test_data = data[:train_size], data[train_size:]
+
+    model = ARIMA(train_data[target_variable], order=order)
+    fitted_model = model.fit()
+
+    forecast = fitted_model.forecast(steps=len(test_data))
+
+    rmse = np.sqrt(mean_squared_error(test_data[target_variable], forecast))
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(train_data.index, train_data[target_variable], label='Training Data')
+    plt.plot(test_data.index, test_data[target_variable], label='Testing Data')
+    plt.plot(test_data.index, forecast, label='Forecasted Data')
+    plt.xlabel('Month')
+    plt.ylabel(target_variable)
+    plt.title('ARIMA Forecasting for ' + target_variable)
+    plt.legend()
+    plt.show()
+
+    print("Root Mean Squared Error (RMSE):", rmse)
+
+arima_model(data, '#Passengers', order=(5,1,0))
+```
 ### OUTPUT:
 
+<img width="1254" height="708" alt="Screenshot 2025-10-27 152040" src="https://github.com/user-attachments/assets/b18fd02e-fe07-4547-ad7f-e1738c66de83" />
 
 ### RESULT:
 Thus the program run successfully based on the ARIMA model using python.
